@@ -30,4 +30,4 @@ imgAbstract converts a static img into squares, dots, and polygons.
 
 ### 0.04
 (May 5, 2015)
-encapsulated code into one global object, 'capture'
+* encapsulated code into one global object, 'capture'
