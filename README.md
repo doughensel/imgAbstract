@@ -2,7 +2,7 @@
 imgAbstract converts a static img into squares, dots, and polygons.
 
 ## ToDo
-* Get the colors of an image
+* ~~Get the colors of an image~~
   * ~~Transfer img to a canvas element~~
   * ~~Use JS to capture the R, G, B, and Alpha of each pixel~~
     * ~~Set variable to define the sample size of colors and find the average color/alpha in that grid~~
@@ -10,7 +10,7 @@ imgAbstract converts a static img into squares, dots, and polygons.
 * Create basic shapes (squares and dots)
   * Make a control that will use the saved color/alpha values to redraw image in square or dot shapes
   * Give the option to change the output grid size
-  * *Fix* Code executes before image loads, creating an error
+  * **Fix** Code executes before image loads, creating an error
 * Create mouse interaction
   * When a mouse/cursor hovers over a section, the grid shapes (dot or square) should push away from the origin of the mouse (like an explosion from the cursor origin)
   * Will work on hover or click
