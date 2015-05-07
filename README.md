@@ -23,17 +23,17 @@ imgAbstract converts a static img into squares, dots, and polygons.
 ## Release History
 
 ### 0.06
-(May 6, 2015)
+May 6, 2015
 * Created drawDots() function
   * Displays the image/color information on the canvas element
   * Alpha/Transparency is represented by a dot's radius size
 
 ### 0.05
-(May 6, 2015)
+May 6, 2015
 * Created the nested for loops to scan over the grid specified by sampleSize
 * Created drawBoxes() function
 	* Displays the image/color information on the canvas element
 
 ### 0.04
-(May 5, 2015)
+May 5, 2015
 * encapsulated code into one global object, 'capture'
