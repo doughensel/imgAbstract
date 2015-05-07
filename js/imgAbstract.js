@@ -1,21 +1,8 @@
 /**
-//		imgAbstract v 0.05
+//		imgAbstract v 0.06
 //		last revision: May 6, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
-
-/*
-//		TODO
-// 			- give the option to change the output grid size
-//  		- test and fix image onload trigger for the initial call -- canvas width != 0 error
-*/
-
-/* 	
-//		KNOWN ISSUE 01:
-//		Image has to be the same domain, however James Tomasino found out a clever work-around 
-//		by creating a proxy file that saved locally can serve up images from other sites.
-//		https://github.com/jamestomasino/Reactive-Color
-*/ 
 
 // capture: an object that houses the code to port an image to the canvas, read the color
 //			information, and output it as an array of elements
@@ -24,6 +11,12 @@ var capture = {
 	//	Set the grid size for sampling data from the image.
 	//	'10' equals a 10px by 10px grid
 	sampleSize : 10,
+	//	Set the grid size for the output
+	outputSize : 10,
+	//  Set how the dots are rendered: dotRadius is divided from outputSize
+	//  2 sets the radius to half the size (thus the dot's diameter will fill the output grid)
+	//  higher numbers will make smaller dots and the inverse is also true
+	dotRadius  : 2,
 	//  The ID for the image being scanned from the DOM
 	imgID      : 'originalImage',
 	//	The ID for the canvas element from the DOM
@@ -39,8 +32,11 @@ var capture = {
 	},
 	init       : function(){
 		// get the image from the DOM
-		this.img.src  = document.getElementById( this.imgID ).src;
-		this.img.onload = this.load();
+		this.img.src    = document.getElementById( this.imgID ).src;
+		var _this       = this;
+		this.img.onload = function(){
+			_this.load();
+		}
 	},
 	load       : function(){
 		// get the canvas element
@@ -53,7 +49,7 @@ var capture = {
 		//	Draw the image on the canvas
 		ctx.drawImage( this.img, 0, 0 );
 		//	Pull the image data from the canvas element
-		//	For this to work the image MUST reside on the same domain (KNOWN ISSUE 01)
+		//	For this to work the image MUST reside on the same domain (Issue #1 in README.md)
 		this.rawImgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );
 		
 		this.getColors();
@@ -143,20 +139,60 @@ var capture = {
 			this.colorArray.push( p );
 		}// END for( i=0; i < sampleCount; i++ )
 
-		this.drawBoxes();
+		// this.drawBoxes();
+		this.drawDots();
 	},
 	drawBoxes  : function(){
 		var ctx = this.canvas.getContext( '2d' );
+		// 	Update the canvas size, if outputSize is different that the original
+		//  sampleSize
+		if( this.outputSize != this.sampleSize ){
+			var diff = this.outputSize / this.sampleSize;
+			this.canvas.width  = Math.floor( this.canvas.width  * diff );
+			this.canvas.height = Math.floor( this.canvas.height * diff );
+		}
 		//	Clear the canvas element
 			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		//	p is for pixel again, but this time to read, not write
 		var p = undefined;
 		for( var i = 0, x = this.colorArray.length; i < x; i ++ ){
 			p = this.colorArray[i];
-			ctx.fillStyle = "rgba("+ p.r +"," + p.g +"," + p.b + ", " + p.a + ")";
-			ctx.fillRect( (p.x * this.sampleSize), (p.y * this.sampleSize), this.sampleSize, this.sampleSize );
+			ctx.fillStyle = 'rgba(' + p.r + ', ' + p.g + ', ' + p.b + ', ' + p.a + ')';
+			ctx.fillRect( (p.x * this.outputSize), (p.y * this.outputSize), this.outputSize, this.outputSize );
 		}
 	},
+	drawDots   : function(){
+		var ctx = this.canvas.getContext( '2d' );
+		// 	Update the canvas size, if outputSize is different that the original
+		//  sampleSize
+		if( this.outputSize != this.sampleSize ){
+			var diff = this.outputSize / this.sampleSize;
+			this.canvas.width  = Math.floor( this.canvas.width  * diff );
+			this.canvas.height = Math.floor( this.canvas.height * diff );
+		}
+		//	Clear the canvas element
+			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+		var p        = undefined,
+			dotNudge = Math.ceil( this.outputSize / 2 ),
+			endAngle = ( 2 * Math.PI ),
+			radius   = 0,
+			scale    = 0;
+
+		for( var i = 0, x = this.colorArray.length; i < x; i ++ ){
+
+			p = this.colorArray[i];
+			radius = Math.floor( p.a * this.outputSize / this.dotRadius );
+			
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(' + p.r + ', ' + p.g + ', ' + p.b + ', 1)';
+			ctx.arc( ( p.x * this.outputSize + dotNudge ), ( p.y * this.outputSize + dotNudge ), radius, 0, endAngle ); 
+			ctx.closePath();
+			ctx.fill();
+
+		}
+
+	}
 };
 
 capture.init();
