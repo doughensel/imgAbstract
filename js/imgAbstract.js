@@ -1,5 +1,5 @@
 /**
-//		imgAbstract v 0.06
+//		imgAbstract v 0.06.01
 //		last revision: May 6, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
@@ -13,14 +13,18 @@ var capture = {
 	sampleSize : 10,
 	//	Set the grid size for the output
 	outputSize : 10,
-	//  Set how the dots are rendered: dotRadius is divided from outputSize
-	//  2 sets the radius to half the size (thus the dot's diameter will fill the output grid)
-	//  higher numbers will make smaller dots and the inverse is also true
-	dotRadius  : 2,
 	//  The ID for the image being scanned from the DOM
 	imgID      : 'originalImage',
 	//	The ID for the canvas element from the DOM
 	canvasID   : 'canvas',
+	//  Set how the dots are rendered: dotRadius is divided from outputSize
+	//  2 sets the radius to half the size (thus the dot's diameter will fill the output grid)
+	//  higher numbers will make smaller dots and the inverse is also true
+	dotRadius  : 2,
+	polygon    : {
+		//  Set the threshold of how strict/lenient the code should be in comparing colors
+		threshold : 0
+	},
 // SYSTEM VARIABLES
 	img        : new Image(),
 	canvas     : undefined,
@@ -140,7 +144,8 @@ var capture = {
 		}// END for( i=0; i < sampleCount; i++ )
 
 		// this.drawBoxes();
-		this.drawDots();
+		// this.drawDots();
+		this.drawPoly();
 	},
 	drawBoxes  : function(){
 		var ctx = this.canvas.getContext( '2d' );
@@ -163,15 +168,14 @@ var capture = {
 	},
 	drawDots   : function(){
 		var ctx = this.canvas.getContext( '2d' );
-		// 	Update the canvas size, if outputSize is different that the original
-		//  sampleSize
+		
 		if( this.outputSize != this.sampleSize ){
 			var diff = this.outputSize / this.sampleSize;
 			this.canvas.width  = Math.floor( this.canvas.width  * diff );
 			this.canvas.height = Math.floor( this.canvas.height * diff );
 		}
-		//	Clear the canvas element
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		
+		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		var p        = undefined,
 			dotNudge = Math.ceil( this.outputSize / 2 ),
@@ -182,7 +186,8 @@ var capture = {
 		for( var i = 0, x = this.colorArray.length; i < x; i ++ ){
 
 			p = this.colorArray[i];
-			radius = Math.floor( p.a * this.outputSize / this.dotRadius );
+			// dot transparency is represented by the size of the dot
+			radius = Math.floor( parseFloat( p.a ) * this.outputSize / this.dotRadius );
 			
 			ctx.beginPath();
 			ctx.fillStyle = 'rgba(' + p.r + ', ' + p.g + ', ' + p.b + ', 1)';
@@ -192,6 +197,27 @@ var capture = {
 
 		}
 
+	},
+	drawPoly   : function(){
+		//  Dump color data into polyArray...
+		//  The polygons need extra attributes unavailable from the pixel object
+		var polyArray = [],
+			x         = 0,
+			y         = 0,
+			r         = 0,
+			g         = 0,
+			b         = 0,
+			a         = 0,
+			edge      = false,
+			alone     = false,
+			used      = false,
+			avail     = true;
+		for( var i=0, j=this.colorArray.length; i<j; i++ ){
+
+		}
+
+		// new math to figure out, going out from a point in a spiral...
+		// var threshold = this.polygon.threshold;
 	}
 };
 
