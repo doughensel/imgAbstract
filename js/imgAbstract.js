@@ -1,6 +1,6 @@
 /**
-//		imgAbstract v 0.06.01
-//		last revision: May 6, 2015
+//		imgAbstract v 0.06.02
+//		last revision: May 7, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
 
@@ -21,9 +21,13 @@ var capture = {
 	//  2 sets the radius to half the size (thus the dot's diameter will fill the output grid)
 	//  higher numbers will make smaller dots and the inverse is also true
 	dotRadius  : 2,
-	polygon    : {
-		//  Set the threshold of how strict/lenient the code should be in comparing colors
-		threshold : 0
+	//  Set the polygon threshold of how strict/lenient the code should be in comparing colors
+	polyThres  : 0,
+	//  Select which type of output to generate. Only one should be set to TRUE
+	output     : {
+		square : false,
+		dot    : true,
+		poly   : false 	//	Not functional: in progress
 	},
 // SYSTEM VARIABLES
 	img        : new Image(),
@@ -143,9 +147,16 @@ var capture = {
 			this.colorArray.push( p );
 		}// END for( i=0; i < sampleCount; i++ )
 
-		// this.drawBoxes();
-		// this.drawDots();
-		this.drawPoly();
+		if( this.output.square ){
+			this.drawBoxes();
+		}
+		if( this.output.dot    ){
+			this.drawDots();
+		}
+		if( this.output.poly   ){
+			this.drawPoly();
+		}
+
 	},
 	drawBoxes  : function(){
 		var ctx = this.canvas.getContext( '2d' );
@@ -217,7 +228,7 @@ var capture = {
 		}
 
 		// new math to figure out, going out from a point in a spiral...
-		// var threshold = this.polygon.threshold;
+		// var threshold = this.polyThres;
 	}
 };
 
