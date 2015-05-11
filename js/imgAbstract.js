@@ -68,7 +68,7 @@ var capture = {
 		//		already made the dimensions easily divisible by sampleSize
 		var columns     = this.canvas.width  / this.sampleSize,
 			rows        = this.canvas.height / this.sampleSize,
-			sampleCount = ( columns + 1 ) * ( rows ),
+			sampleCount = ( columns + 1 ) * ( rows ) - 1,
 			sampleSqr   = this.sampleSize * this.sampleSize;
 		// pixel OBJECT to store the corrdinates, color, and alpha info for each sample area
 		function pixel(){
@@ -107,16 +107,21 @@ var capture = {
 			b = 0;
 			a = 0;
 
+			//console.groupCollapsed( 'Grid : ' + i );
+			
 			// Check out FIGURING OUT THE MATH at the bottom of the file to see a 
 			// breakdown on how the code scans over the sample grid space on the image
-
+			
 			// Loop over the sample size
-			j = 1;
+			j = 0;
 			k = ( row * columns * sampleSqr ) + ( column * this.sampleSize );
-			for( ; j <= this.sampleSize; j++ ){
+			for( ; j < this.sampleSize; j++ ){
 				// find the start of the line based off of the row / column
-				l = k + ( ( this.sampleSize * columns ) * ( j - 1 ) );
+				l = k + ( ( this.sampleSize * columns ) * ( j ) );
 				m = l + this.sampleSize;
+				
+				// console.groupCollapsed( 'Row ' + j );
+
 				for( ; l < m; l++ ){
 					n = l * 4;
 
@@ -124,8 +129,15 @@ var capture = {
 					g += this.rawImgData.data[ n + 1 ];
 					b += this.rawImgData.data[ n + 2 ];
 					a += this.rawImgData.data[ n + 3 ];
+
+					// console.log( l );
+
 				}
+
+				// console.groupEnd();
 			}
+
+			// console.groupEnd();
 
 			p.r = Math.floor( r / sampleSqr );
 			p.g = Math.floor( g / sampleSqr );
@@ -143,6 +155,8 @@ var capture = {
 				column = 0;
 				row++;
 			}
+			// console.log( column + ', ' + row );	
+
 			// push the pixel to the colorArray[]
 			this.colorArray.push( p );
 		}// END for( i=0; i < sampleCount; i++ )
