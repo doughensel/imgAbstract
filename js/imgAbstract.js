@@ -22,7 +22,7 @@ var capture = {
 	//  higher numbers will make smaller dots and the inverse is also true
 	dotRadius  : 2,
 	//  Set the polygon threshold of how strict/lenient the code should be in comparing colors
-	polyThres  : 0,
+	polyThres  : 10,
 	//  Select which type of output to generate. Only one should be set to TRUE
 	output     : {
 		square : false,
@@ -218,9 +218,31 @@ var capture = {
 		var threshold  = this.polyThres;
 			startPix   = Math.floor( this.colorArray.length/2 );
 
-		function spiral( level, step ){
-			
+		var p1 = this.colorArray[ startPix ],
+			p2 = this.colorArray[ startPix - 1 ];
+
+		console.log( p1 );
+		console.log( p2 );
+		console.log( compareColors( p1, p2 ) );
+
+		function spiral( index, level, testColor ){
+
+			// Go out level number of spaces from the index point
+
+
 		}
+
+		//  Compare one color with another, but use polyThres (threshold) 
+		//  to allow for variations in the colors. 
+		function compareColors( colorPrime, colorTest ){
+			if( ( colorTest.r >= colorPrime.r - threshold && colorTest.r <= colorPrime.r + threshold ) && 
+				( colorTest.g >= colorPrime.g - threshold && colorTest.g <= colorPrime.g + threshold ) && 
+				( colorTest.b >= colorPrime.b - threshold && colorTest.b <= colorPrime.b + threshold ) ){
+				return true;
+			}else{
+				return false;
+			}
+		}// END function compareColors()
 
 	}
 };
