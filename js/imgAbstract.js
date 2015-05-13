@@ -1,6 +1,6 @@
 /**
-//		imgAbstract v 0.06.03
-//		last revision: May 12, 2015
+//		imgAbstract v 0.06.04
+//		last revision: May 13, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
 
@@ -35,9 +35,11 @@ var capture = {
 	rawImgData : [],
 	colorArray : [],
 // FUNCTIONS
-	test       : function(){
-		//  write test code to draw a red square at a specific pixel point
+	test       : function( p, color ){
 		console.log( 'test' );
+		var ctx = this.canvas.getContext( '2d' );
+			ctx.fillStyle = color;
+			ctx.fillRect( p.x * this.sampleSize, p.y * this.sampleSize, this.sampleSize, this.sampleSize );
 	},
 	init       : function(){
 		// get the image from the DOM
@@ -225,6 +227,8 @@ var capture = {
 		console.log( p1 );
 		console.log( p2 );
 		console.log( compareColors( p1, p2 ) );
+
+		this.test( p1, 'rgba( 255, 0, 0, 1)' );
 
 		function spiral( index, level, testColor ){
 
