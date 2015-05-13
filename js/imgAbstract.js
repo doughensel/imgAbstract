@@ -36,6 +36,7 @@ var capture = {
 	colorArray : [],
 // FUNCTIONS
 	test       : function(){
+		//  write test code to draw a red square at a specific pixel point
 		console.log( 'test' );
 	},
 	init       : function(){
