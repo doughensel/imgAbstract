@@ -19,6 +19,7 @@ imgAbstract converts a static img into squares, dots, and polygons.
 
 1. Image has to be the same domain, however James Tomasino found out a clever work-around by creating a proxy file that saved locally can serve up images from other sites. https://github.com/jamestomasino/Reactive-Color
 2. Sporadically, image.onload event will trigger before the image has loaded, causing the code to break
+3. Some pixels are being read twice (approximately 2% in initial tests)
 
 ## Release History
 

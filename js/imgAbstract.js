@@ -1,6 +1,6 @@
 /**
-//		imgAbstract v 0.06.02
-//		last revision: May 7, 2015
+//		imgAbstract v 0.06.03
+//		last revision: May 12, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
 
@@ -26,8 +26,8 @@ var capture = {
 	//  Select which type of output to generate. Only one should be set to TRUE
 	output     : {
 		square : false,
-		dot    : true,
-		poly   : false 	//	Not functional: in progress
+		dot    : false,
+		poly   : true 	//	Not functional: in progress
 	},
 // SYSTEM VARIABLES
 	img        : new Image(),
@@ -106,8 +106,6 @@ var capture = {
 			g = 0;
 			b = 0;
 			a = 0;
-
-			//console.groupCollapsed( 'Grid : ' + i );
 			
 			// Check out FIGURING OUT THE MATH at the bottom of the file to see a 
 			// breakdown on how the code scans over the sample grid space on the image
@@ -120,9 +118,8 @@ var capture = {
 				l = k + ( ( this.sampleSize * columns ) * ( j ) );
 				m = l + this.sampleSize;
 				
-				// console.groupCollapsed( 'Row ' + j );
-
 				for( ; l < m; l++ ){
+
 					n = l * 4;
 
 					r += this.rawImgData.data[ n + 0 ];
@@ -130,14 +127,9 @@ var capture = {
 					b += this.rawImgData.data[ n + 2 ];
 					a += this.rawImgData.data[ n + 3 ];
 
-					// console.log( l );
-
 				}
 
-				// console.groupEnd();
 			}
-
-			// console.groupEnd();
 
 			p.r = Math.floor( r / sampleSqr );
 			p.g = Math.floor( g / sampleSqr );
@@ -155,7 +147,6 @@ var capture = {
 				column = 0;
 				row++;
 			}
-			// console.log( column + ', ' + row );	
 
 			// push the pixel to the colorArray[]
 			this.colorArray.push( p );
@@ -224,38 +215,12 @@ var capture = {
 
 	},
 	drawPoly   : function(){
-		// Step 1: Find the middle point in the array
-		//		( Math.floor( height / 2 ) * width ) + ( Math.floor( width / 2 ) )
-		var width      = this.canvas.width  / this.sampleSize,
-			height     = this.canvas.height / this.sampleSize;
-			console.log( 'width: ' + width );
-			startPix   = ( Math.floor( height / 2 ) * width );
+		var threshold  = this.polyThres;
+			startPix   = Math.floor( this.colorArray.length/2 );
 
-			console.log( startPix );
-
-		var ctx        = this.canvas.getContext( '2d' );
-			ctx.fillStyle = 'rgba( 255, 0, 0, 1 )';
-		var p = this.colorArray[ (startPix) ];
-
-			ctx.fillRect( (p.x * this.outputSize), (p.y * this.outputSize), this.outputSize, this.outputSize );
-
-		// new math to figure out, going out from a point in a spiral...
-		// var threshold = this.polyThres;
-
-		//  Dump color data into polyArray...
-		//  The polygons need extra attributes unavailable from the pixel object
-		var polyArray = [],
-			x         = 0,
-			y         = 0,
-			r         = 0,
-			g         = 0,
-			b         = 0,
-			a         = 0,
-			edge      = false,
-			alone     = false,
-			used      = false,
-			avail     = true;
-
+		function spiral( level, step ){
+			
+		}
 
 	}
 };
@@ -316,101 +281,4 @@ capture.init();
 	| 0,10: 1,10: 2,10: 3,10[ 4,10: 5,10: 6,10: 7,10] 8,10: 9,10: 10,10: 11,10| => 132
 	| 0,11: 1,11: 2,11: 3,11[ 4,11: 5,11: 6,11: 7,11] 8,11: 9,11: 10,11: 11,11| => 144
 	+-----------------------+~~~~~~~~~~~~~~~~~~~~~~~+-------------------------+
-
-
-	Find Middle Point (start in the middle)
-	( Math.floor( height / 2 ) * width ) + ( Math.floor( width / 2 ) )
-	12 / 2 * 12 + 12 / 2
-	6 * 12 + 6
-	72 + 6 = 78
-		A: [ 65 || 66 || 77 || 78 ]
-	
-	+-----------------------+-----------------------+-----------------------+
-	| 0   : 1   : 2   : 3   | 4   : 5   : 6   : 7   | 8   : 9   : 10  : 11  |
-	| 12  : 13  : 14  : 15  | 16  : 17  : 18  : 19  | 20  : 21  : 22  : 23  |
-	| 24  : 25  : 26  : 27  | 28  : 29  : 30  : 31  | 32  : 33  : 34  : 35  | 
-	| 36  : 37  : 38  : 39  | 40  : 41  : 42  : 43  | 44  : 45  : 46  : 47  | 
-	+-----------------------+-----------------------+-----------------------+
-	| 48  : 49  : 50  : 51  | 52  : 53  : 54  : 55  | 56  : 57  : 58  : 59  | 
-	| 60  : 61  : 62  : 63  | 64  : 65  : 66  : 67  | 68  : 69  : 70  : 71  |
-	| 72  : 73  : 74  : 75  | 76  : 77  : 78  : 79  | 80  : 81  : 82  : 83  | 
-	| 84  : 85  : 86  : 87  | 88  : 89  : 90  : 91  | 92  : 93  : 94  : 95  |
-	+-----------------------+-----------------------+-----------------------+
-	| 96  : 97  : 98  : 99  | 100 : 101 : 102 : 103 | 104 : 105 : 106 : 107 |
-	| 108 : 109 : 110 : 111 | 112 : 113 : 114 : 115 | 116 : 117 : 118 : 119 | 
-	| 120 : 121 : 122 : 123 | 124 : 125 : 126 : 127 | 128 : 129 : 130 : 131 | 
-	| 132 : 133 : 134 : 135 | 136 : 137 : 138 : 139 | 140 : 141 : 142 : 143 | 
-	+-----------------------+-----------------------+-----------------------+
-
-	( Math.floor( height / 2 ) * width ) + ( Math.floor( width / 2 ) )
-	20 / 2 * 8 + 8 / 2 
-	10 * 8 + 4
-	80 + 4 = 84
-		A: [ 75 || 76 || 83 || 84 ] 
-
-	+-----------------------+-----------------------+
-	| 0   : 1   : 2   : 3   | 4   : 5   : 6   : 7   |
-	| 8   : 9   : 10  : 11  | 12  : 13  : 14  : 15  | 
-	| 16  : 17  : 18  : 19  | 20  : 21  : 22  : 23  | 
-	| 24  : 25  : 26  : 27  | 28  : 29  : 30  : 31  |
-	+-----------------------+-----------------------+
-	| 32  : 33  : 34  : 35  | 36  : 37  : 38  : 39  |
-	| 40  : 41  : 42  : 43  | 44  : 45  : 46  : 47  |
-	| 48  : 49  : 50  : 51  | 52  : 53  : 54  : 55  |
-	| 56  : 57  : 58  : 59  | 60  : 61  : 62  : 63  |
-	+-----------------------+-----------------------+
-	| 64  : 65  : 66  : 67  | 68  : 69  : 70  : 71  |
-	| 72  : 73  : 74  : 75  | 76  : 77  : 78  : 79  |
-	| 80  : 81  : 82  : 83  | 84  : 85  : 86  : 87  |
-	| 88  : 89  : 90  : 91  | 92  : 93  : 94  : 95  |
-	+-----------------------+-----------------------+
-	| 96  : 97  : 98  : 99  | 100 : 101 : 102 : 103 |
-	| 104 : 105 : 106 : 107 | 108 : 109 : 110 : 111 |
-	| 112 : 113 : 114 : 115 | 116 : 117 : 118 : 119 |
-	| 120 : 121 : 122 : 123 | 124 : 125 : 126 : 127 |
-	+-----------------------+-----------------------+
-	| 128 : 129 : 130 : 131 | 132 : 133 : 134 : 135 |
-	| 136 : 137 : 138 : 139 | 140 : 141 : 142 : 143 |
-	| 144 : 145 : 146 : 147 | 148 : 149 : 150 : 151 |
-	| 152 : 153 : 154 : 155 | 156 : 157 : 158 : 159 |
-	+-----------------------+-----------------------+
-
-	( Math.floor( height / 2 ) * width ) + ( Math.floor( width / 2 ) )
-	5 / 2 * 15 + 15 / 2
-	(2) * 15 + 7 = 37
-		A: 37
-
-	+-----------------------------+-----------------------------+-----------------------------+
-	| 0   : 1   : 2   : 3   : 4   | 5   : 6   : 7   : 8   : 9   | 10  : 11  : 12  : 13  : 14  |
-	| 15  : 16  : 17  : 18  : 19  | 20  : 21  : 22  : 23  : 24  | 25  : 26  : 27  : 28  : 29  |
-	| 30  : 31  : 32  : 33  : 34  | 35  : 36  : 37  : 38  : 39  | 40  : 41  : 42  : 43  : 44  |
-	| 45  : 46  : 47  : 48  : 49  | 50  : 51  : 52  : 53  : 54  | 55  : 56  : 57  : 58  : 59  |
-	| 60  : 61  : 62  : 63  : 64  | 65  : 66  : 67  : 68  : 69  | 70  : 71  : 72  : 73  : 74  |
-	+-----------------------------+-----------------------------+-----------------------------+
-	
-	( Math.floor( height / 2 ) * width ) + ( Math.floor( width / 2 ) )
-	( 15 / 2 ) * 5 + 5 / 2
-	7 * 5 + 2
-	35 + 2 = 37
-		A: 37
-
-	+-----------------------------+
-	| 0   : 1   : 2   : 3   : 4   |
-	| 5   : 6   : 7   : 8   : 9   |
-	| 10  : 11  : 12  : 13  : 14  |
-	| 15  : 16  : 17  : 18  : 19  |
-	| 20  : 21  : 22  : 23  : 24  |
-	+-----------------------------+
-	| 25  : 26  : 27  : 28  : 29  |
-	| 30  : 31  : 32  : 33  : 34  |
-	| 35  : 36  : 37  : 38  : 39  |
-	| 40  : 41  : 42  : 43  : 44  |
-	| 45  : 46  : 47  : 48  : 49  |
-	+-----------------------------+
-	| 50  : 51  : 52  : 53  : 54  |
-	| 55  : 56  : 57  : 58  : 59  |
-	| 60  : 61  : 62  : 63  : 64  |
-	| 65  : 66  : 67  : 68  : 69  |
-	| 70  : 71  : 72  : 73  : 74  |
-	+-----------------------------+
 */
