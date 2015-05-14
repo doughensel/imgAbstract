@@ -1,6 +1,6 @@
 /**
-//		imgAbstract v 0.06.04
-//		last revision: May 13, 2015
+//		imgAbstract v 0.06.05
+//		last revision: May 14, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
 
@@ -229,6 +229,9 @@ var capture = {
 			dot  = 0,
 			i    = 0,
 			j    = 0;
+
+			var p = colorArray[ startPix ];
+			spiral( startPix, 1, p );
 
 		function spiral( index, level, testColor ){
 			step = 0;
