@@ -218,23 +218,31 @@ var capture = {
 
 	},
 	drawPoly   : function(){
-		var threshold  = this.polyThres;
-			startPix   = Math.floor( this.colorArray.length/2 );
-
-		var p1 = this.colorArray[ startPix ],
-			p2 = this.colorArray[ startPix - 1 ];
-
-		console.log( p1 );
-		console.log( p2 );
-		console.log( compareColors( p1, p2 ) );
-
-		this.test( p1, 'rgba( 255, 0, 0, 1)' );
+		var threshold   = this.polyThres,
+			startPix    = Math.floor( this.colorArray.length/2 ),
+			width       = this.canvas.width  / this.sampleSize,
+			height      = this.canvas.height / this.sampleSize,
+			colorArray  = this.colorArray,
+			vectorArray = [],
+			// counters
+			step = 0,
+			dot  = 0,
+			i    = 0,
+			j    = 0;
 
 		function spiral( index, level, testColor ){
-
-			// Go out level number of spaces from the index point
-
-
+			step = 0;
+			dot  = 0;
+			for( i = 0, j = level * 8; i < j; i++ ){
+				switch( step ){
+					case 0:
+						dot = index + level;
+						step++;
+						break;
+					case 1:
+						break;
+				}
+			}
 		}
 
 		//  Compare one color with another, but use polyThres (threshold) 
