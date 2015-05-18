@@ -219,30 +219,85 @@ var capture = {
 	},
 	drawPoly   : function(){
 		var threshold   = this.polyThres,
-			startPix    = Math.floor( this.colorArray.length/2 ),
+			startPix    = Math.floor( this.colorArray.length/2 ) - 1,
 			width       = this.canvas.width  / this.sampleSize,
 			height      = this.canvas.height / this.sampleSize,
 			colorArray  = this.colorArray,
-			vectorArray = [],
-			// counters
-			step = 0,
-			dot  = 0,
-			i    = 0,
-			j    = 0;
+			vectorArray = [];
+
+			var _this = this;
 
 			var p = colorArray[ startPix ];
-			spiral( startPix, 1, p );
+
+			this.test( p, 'rgba( 255, 0, 0, 1 )' );
+			spiral( startPix, 3, p );
+
+		
 
 		function spiral( index, level, testColor ){
-			step = 0;
-			dot  = 0;
+			var i    = 0,
+				j    = 0,
+				step = 0,
+				dot  = 0;
+			var outputColor = Math.floor( 255 / 8 );
+
 			for( i = 0, j = level * 8; i < j; i++ ){
 				switch( step ){
 					case 0:
+						// move right from index
 						dot = index + level;
+						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 1 ) + ', 0, 1 )');
 						step++;
 						break;
 					case 1:
+						// move left from index
+						dot = index - level;
+						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 2 ) + ', 0, 1 )');
+						step++;
+						break;
+					case 2: 
+						// move up from index
+						dot = index - ( width * level ) - level;
+						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 3 ) + ', 0, 1 )');
+						step++;
+						break;
+					case 3:
+						// move down from index
+						dot = index + ( width * level ) + level;
+						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 4 ) + ', 0, 1 )');
+						step++;
+						break;
+					case 4: 
+						// move up from right of index
+						for( var x = 1; x <= level; x++ ){
+							dot = index + level  - ( width * x ) - x;
+							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 5 ) + ', 0, 1 )' );
+						}
+						step++;
+						break;
+					case 5:
+						// move up from left of index
+						for( var x = 1; x <= level; x++ ){
+							dot = index - level  - ( width * x ) - x;
+							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 6 ) + ', 0, 1 )' );
+						}
+						step++;
+						break;
+					case 6:
+						// move down from right of index
+						for( var x = 1; x <= level; x++ ){
+							dot = index + level + (width * x ) + x;
+							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 7 ) + ', 0, 1 )' );
+						}
+						step++;
+						break;
+					case 7:
+						// move down from left of index
+						for( var x = 1; x<= level; x++ ){
+							dot = index - level + ( width * x ) + x;
+							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 8 ) + ', 0, 1 )' );
+						}
+						step++;
 						break;
 				}
 			}
