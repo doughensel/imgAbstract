@@ -230,11 +230,14 @@ var capture = {
 			var p = colorArray[ startPix ];
 
 			this.test( p, 'rgba( 255, 0, 0, 1 )' );
-			spiral( startPix, 5, p );
-//			spiral( startPix, 4, p );
-			spiral( startPix, 3, p );
-//			spiral( startPix, 2, p );
-			spiral( startPix, 1, p );
+			spiral( startPix, 8, p );
+//			spiral( startPix, 7, p );
+			spiral( startPix, 6, p );
+//			spiral( startPix, 5, p );
+			spiral( startPix, 4, p );
+//			spiral( startPix, 3, p );
+			spiral( startPix, 2, p );
+//			spiral( startPix, 1, p );
 
 		
 
