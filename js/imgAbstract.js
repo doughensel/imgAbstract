@@ -1,6 +1,6 @@
 /**
-//		imgAbstract v 0.06.05
-//		last revision: May 14, 2015
+//		imgAbstract v 0.06.06
+//		last revision: May 20, 2015
 //		https://github.com/doughensel/imgAbstract
 **/
 
@@ -36,7 +36,7 @@ var capture = {
 	colorArray : [],
 // FUNCTIONS
 	test       : function( p, color ){
-		console.log( 'test' );
+		// console.log( 'test' );
 		var ctx = this.canvas.getContext( '2d' );
 			ctx.fillStyle = color;
 			ctx.fillRect( p.x * this.sampleSize, p.y * this.sampleSize, this.sampleSize, this.sampleSize );
@@ -230,76 +230,53 @@ var capture = {
 			var p = colorArray[ startPix ];
 
 			this.test( p, 'rgba( 255, 0, 0, 1 )' );
+			spiral( startPix, 5, p );
+//			spiral( startPix, 4, p );
 			spiral( startPix, 3, p );
+//			spiral( startPix, 2, p );
+			spiral( startPix, 1, p );
 
 		
 
 		function spiral( index, level, testColor ){
-			var i    = 0,
-				j    = 0,
-				step = 0,
-				dot  = 0;
-			var outputColor = Math.floor( 255 / 8 );
-
-			for( i = 0, j = level * 8; i < j; i++ ){
-				switch( step ){
-					case 0:
-						// move right from index
-						dot = index + level;
-						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 1 ) + ', 0, 1 )');
-						step++;
-						break;
-					case 1:
-						// move left from index
-						dot = index - level;
-						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 2 ) + ', 0, 1 )');
-						step++;
-						break;
-					case 2: 
-						// move up from index
-						dot = index - ( width * level ) - level;
-						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 3 ) + ', 0, 1 )');
-						step++;
-						break;
-					case 3:
-						// move down from index
-						dot = index + ( width * level ) + level;
-						_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 4 ) + ', 0, 1 )');
-						step++;
-						break;
-					case 4: 
-						// move up from right of index
-						for( var x = 1; x <= level; x++ ){
-							dot = index + level  - ( width * x ) - x;
-							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 5 ) + ', 0, 1 )' );
-						}
-						step++;
-						break;
-					case 5:
-						// move up from left of index
-						for( var x = 1; x <= level; x++ ){
-							dot = index - level  - ( width * x ) - x;
-							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 6 ) + ', 0, 1 )' );
-						}
-						step++;
-						break;
-					case 6:
-						// move down from right of index
-						for( var x = 1; x <= level; x++ ){
-							dot = index + level + (width * x ) + x;
-							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 7 ) + ', 0, 1 )' );
-						}
-						step++;
-						break;
-					case 7:
-						// move down from left of index
-						for( var x = 1; x<= level; x++ ){
-							dot = index - level + ( width * x ) + x;
-							_this.test( colorArray[ dot ], 'rgba( 0, ' + ( outputColor * 8 ) + ', 0, 1 )' );
-						}
-						step++;
-						break;
+			var color  = 0,
+				cstep  = Math.floor( 255 / (level * 8) ),
+				step   = 0,
+				dot    = 0,
+				top    = {
+					right: 0,
+					left : 0
+				},
+				bottom = {
+					right: 0,
+					left : 0
 				}
+
+			top.right    = index - ( width * level );
+			top.left     = index - ( width * level ) - ( level * 2 );
+			bottom.right = index + ( width * level ) + ( level * 2 );
+			bottom.left  = index + ( width * level );
+
+			for( var i=top.left, j=top.right; i<j; i++ ){
+				color = 'rgba( 0, ' + dot + ', 0, 1 )';
+				_this.test( colorArray[i], color );
+				dot += cstep;
+			}
+			step = ( bottom.right - top.right ) / ( level * 2 );
+			for( var i=top.right, j=bottom.right; i<j; i+=step ){
+				color = 'rgba( 0, ' + dot + ', 0, 1 )';
+				_this.test( colorArray[i], color );
+				dot += cstep;
+			}
+			for( var i=bottom.right, j=bottom.left; i>j; i-- ){
+				color = 'rgba( 0, ' + dot + ', 0, 1 )';
+				_this.test( colorArray[i], color );
+				dot += cstep;
+			}
+			for( var i=bottom.left, j=top.left; i>j; i-=step ){
+				color = 'rgba( 0, ' + dot + ', 0, 1 )';
+				_this.test( colorArray[i], color );
+				dot += cstep;
 			}
 		}
 
