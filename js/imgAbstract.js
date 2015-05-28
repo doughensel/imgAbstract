@@ -225,26 +225,10 @@ var capture = {
 			colorArray  = this.colorArray,
 			vectorArray = [];
 
-			var _this = this;
+		spiral( startPix, 1 );
 
-			var p = colorArray[ startPix ];
-
-			this.test( p, 'rgba( 255, 0, 0, 1 )' );
-			spiral( startPix, 8, p );
-//			spiral( startPix, 7, p );
-			spiral( startPix, 6, p );
-//			spiral( startPix, 5, p );
-			spiral( startPix, 4, p );
-//			spiral( startPix, 3, p );
-			spiral( startPix, 2, p );
-//			spiral( startPix, 1, p );
-
-		
-
-		function spiral( index, level, testColor ){
-			var color  = 0,
-				cstep  = Math.floor( 255 / (level * 8) ),
-				step   = 0,
+		function spiral( index, level ){
+			var step   = 0,
 				dot    = 0,
 				top    = {
 					right: 0,
@@ -260,26 +244,19 @@ var capture = {
 			bottom.right = index + ( width * level ) + ( level * 2 );
 			bottom.left  = index + ( width * level );
 
-			for( var i=top.left, j=top.right; i<j; i++ ){
-				color = 'rgba( 0, ' + dot + ', 0, 1 )';
-				_this.test( colorArray[i], color );
-				dot += cstep;
-			}
 			step = ( bottom.right - top.right ) / ( level * 2 );
-			for( var i=top.right, j=bottom.right; i<j; i+=step ){
-				color = 'rgba( 0, ' + dot + ', 0, 1 )';
-				_this.test( colorArray[i], color );
-				dot += cstep;
+
+			for( var i=top.left,     j=top.right;    i<j; i++     ){
+				compareColors( colorArray[index], colorArray[i] );
 			}
-			for( var i=bottom.right, j=bottom.left; i>j; i-- ){
-				color = 'rgba( 0, ' + dot + ', 0, 1 )';
-				_this.test( colorArray[i], color );
-				dot += cstep;
+			for( var i=top.right,    j=bottom.right; i<j; i+=step ){
+				compareColors( colorArray[index], colorArray[i] );
 			}
-			for( var i=bottom.left, j=top.left; i>j; i-=step ){
-				color = 'rgba( 0, ' + dot + ', 0, 1 )';
-				_this.test( colorArray[i], color );
-				dot += cstep;
+			for( var i=bottom.right, j=bottom.left;  i>j; i--     ){
+				compareColors( colorArray[index], colorArray[i] );
+			}
+			for( var i=bottom.left,  j=top.left;     i>j; i-=step ){
+				compareColors( colorArray[index], colorArray[i] );
 			}
 		}
 
@@ -289,8 +266,10 @@ var capture = {
 			if( ( colorTest.r >= colorPrime.r - threshold && colorTest.r <= colorPrime.r + threshold ) && 
 				( colorTest.g >= colorPrime.g - threshold && colorTest.g <= colorPrime.g + threshold ) && 
 				( colorTest.b >= colorPrime.b - threshold && colorTest.b <= colorPrime.b + threshold ) ){
+				console.log( 'true' );
 				return true;
 			}else{
+				console.log( 'false' );
 				return false;
 			}
 		}// END function compareColors()
