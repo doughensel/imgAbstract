@@ -36,10 +36,12 @@ var capture = {
 	colorArray : [],
 // FUNCTIONS
 	test       : function( p, color ){
-		// console.log( 'test' );
+		console.log( 'test' );
 		var ctx = this.canvas.getContext( '2d' );
 			ctx.fillStyle = color;
 			ctx.fillRect( p.x * this.sampleSize, p.y * this.sampleSize, this.sampleSize, this.sampleSize );
+			ctx.strokeStyle = '#FFFFFF';
+			ctx.strokeRect( p.x * this.sampleSize, p.y * this.sampleSize, this.sampleSize, this.sampleSize );
 	},
 	init       : function(){
 		// get the image from the DOM
@@ -218,18 +220,63 @@ var capture = {
 
 	},
 	drawPoly   : function(){
-		var threshold   = this.polyThres,
+		var _this       = this,
+			threshold   = this.polyThres,
 			startPix    = Math.floor( this.colorArray.length/2 ) - 1,
 			width       = this.canvas.width  / this.sampleSize,
 			height      = this.canvas.height / this.sampleSize,
 			colorArray  = this.colorArray,
-			vectorArray = [];
+			// points      = [],
+			// sections    = [],
+			section     = {
+				color   : {
+					r : 0,
+					g : 0,
+					b : 0,
+					a : ''
+				},
+				indexes : []
+			};
 
-		spiral( startPix, 1 );
+		function startSection( index ){
+			section.color.r = colorArray[index].r;
+			section.color.g = colorArray[index].g;
+			section.color.b = colorArray[index].b;
+			section.color.a = colorArray[index].a;
+			section.indexes.push( index );
 
-		function spiral( index, level ){
+			spiral( section, index );
+
+			var tmpColor = 'rgba( ' + section.color.r + ', ' + section.color.g + ', ' + section.color.b + ', ' + section.color.a + ')';
+
+			for( var i=0, x=section.indexes.length; i<x; i++ ){
+				_this.test( colorArray[section.indexes[i]], 'teal' );
+			}
+		}
+
+		startSection( startPix );
+		
+
+		function checkIndexes( index, indexes ){
+			var exists = false;
+			for( var i=0, x=indexes.length; i<x; i++ ){
+				if( index === indexes[i] ){
+					exists = true;
+					break;
+				}
+			}
+			if( !exists ){
+				indexes.push( index );
+				spiral( section, index );
+			}
+		}
+
+		function spiral( elem, index, level ){
+
+			level = level || 1; 
+
 			var step   = 0,
-				dot    = 0,
+				test   = false,
 				top    = {
 					right: 0,
 					left : 0
@@ -237,7 +284,7 @@ var capture = {
 				bottom = {
 					right: 0,
 					left : 0
-				}
+				};
 
 			top.right    = index - ( width * level );
 			top.left     = index - ( width * level ) - ( level * 2 );
@@ -247,16 +294,37 @@ var capture = {
 			step = ( bottom.right - top.right ) / ( level * 2 );
 
 			for( var i=top.left,     j=top.right;    i<j; i++     ){
-				compareColors( colorArray[index], colorArray[i] );
+				test = compareColors( colorArray[index], colorArray[i] );
+				if( test ){
+					checkIndexes( i, elem.indexes );
+					// elem.indexes.push(i);
+
+					// spiral( i, 1 );
+				}
 			}
 			for( var i=top.right,    j=bottom.right; i<j; i+=step ){
-				compareColors( colorArray[index], colorArray[i] );
+				test = compareColors( colorArray[index], colorArray[i] );
+				if( test ){
+					checkIndexes( i, elem.indexes );
+					// elem.indexes.push(i);
+					// spiral( i, 1 );
+				}
 			}
 			for( var i=bottom.right, j=bottom.left;  i>j; i--     ){
-				compareColors( colorArray[index], colorArray[i] );
+				test = compareColors( colorArray[index], colorArray[i] );
+				if( test ){
+					checkIndexes( i, elem.indexes );
+					// elem.indexes.push(i);
+					// spiral( i, 1 );
+				}
 			}
 			for( var i=bottom.left,  j=top.left;     i>j; i-=step ){
-				compareColors( colorArray[index], colorArray[i] );
+				test = compareColors( colorArray[index], colorArray[i] );
+				if( test ){
+					checkIndexes( i, elem.indexes );
+					// elem.indexes.push(i);
+					// spiral( i, 1 );
+				}
 			}
 		}
 
@@ -266,10 +334,8 @@ var capture = {
 			if( ( colorTest.r >= colorPrime.r - threshold && colorTest.r <= colorPrime.r + threshold ) && 
 				( colorTest.g >= colorPrime.g - threshold && colorTest.g <= colorPrime.g + threshold ) && 
 				( colorTest.b >= colorPrime.b - threshold && colorTest.b <= colorPrime.b + threshold ) ){
-				console.log( 'true' );
 				return true;
 			}else{
-				console.log( 'false' );
 				return false;
 			}
 		}// END function compareColors()
