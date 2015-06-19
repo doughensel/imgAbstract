@@ -22,7 +22,7 @@ var capture = {
 	//  higher numbers will make smaller dots and the inverse is also true
 	dotRadius  : 2,
 	//  Set the polygon threshold of how strict/lenient the code should be in comparing colors
-	polyThres  : 10,
+	polyThres  : 20,
 	//  Select which type of output to generate. Only one should be set to TRUE
 	output     : {
 		square : false,
@@ -36,7 +36,7 @@ var capture = {
 	colorArray : [],
 // FUNCTIONS
 	test       : function( p, color ){
-		console.log( 'test' );
+		// console.log( 'test' );
 		var ctx = this.canvas.getContext( '2d' );
 			ctx.fillStyle = color;
 			ctx.fillRect( p.x * this.sampleSize, p.y * this.sampleSize, this.sampleSize, this.sampleSize );
@@ -257,21 +257,36 @@ var capture = {
 		startSection( startPix );
 		
 
-		function checkIndexes( index, indexes ){
+		function checkIndexes( index, elem ){
 			var exists = false;
-			for( var i=0, x=indexes.length; i<x; i++ ){
-				if( index === indexes[i] ){
+			for( var i=0, x=elem.indexes.length; i<x; i++ ){
+				if( index === elem.indexes[i] ){
 					exists = true;
 					break;
 				}
 			}
 			if( !exists ){
-				indexes.push( index );
-				spiral( section, index );
+				elem.indexes.push( index );
+				spiral( elem, index );
+			}
+		}
+
+		function testColor( index, i, elem ){
+			if( i >= 0 && i < colorArray.length ){
+				_this.test( colorArray[i], 'red' );
+				if( compareColors( colorArray[index], colorArray[i] ) ){
+					checkIndexes( i, elem );
+				}
 			}
 		}
 
 		function spiral( elem, index, level ){
+
+			/*
+			//		x < colorArray.length
+			//		  >= 0
+			//	
+			*/
 
 			level = level || 1; 
 
@@ -294,37 +309,16 @@ var capture = {
 			step = ( bottom.right - top.right ) / ( level * 2 );
 
 			for( var i=top.left,     j=top.right;    i<j; i++     ){
-				test = compareColors( colorArray[index], colorArray[i] );
-				if( test ){
-					checkIndexes( i, elem.indexes );
-					// elem.indexes.push(i);
-
-					// spiral( i, 1 );
-				}
+				testColor( index, i, elem );
 			}
 			for( var i=top.right,    j=bottom.right; i<j; i+=step ){
-				test = compareColors( colorArray[index], colorArray[i] );
-				if( test ){
-					checkIndexes( i, elem.indexes );
-					// elem.indexes.push(i);
-					// spiral( i, 1 );
-				}
+				testColor( index, i, elem );
 			}
 			for( var i=bottom.right, j=bottom.left;  i>j; i--     ){
-				test = compareColors( colorArray[index], colorArray[i] );
-				if( test ){
-					checkIndexes( i, elem.indexes );
-					// elem.indexes.push(i);
-					// spiral( i, 1 );
-				}
+				testColor( index, i, elem );
 			}
 			for( var i=bottom.left,  j=top.left;     i>j; i-=step ){
-				test = compareColors( colorArray[index], colorArray[i] );
-				if( test ){
-					checkIndexes( i, elem.indexes );
-					// elem.indexes.push(i);
-					// spiral( i, 1 );
-				}
+				testColor( index, i, elem );
 			}
 		}
 
