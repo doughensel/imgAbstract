@@ -22,7 +22,7 @@ var capture = {
 	//  higher numbers will make smaller dots and the inverse is also true
 	dotRadius  : 2,
 	//  Set the polygon threshold of how strict/lenient the code should be in comparing colors
-	polyThres  : 20,
+	polyThres  : 42,
 	//  Select which type of output to generate. Only one should be set to TRUE
 	output     : {
 		square : false,
@@ -222,7 +222,7 @@ var capture = {
 	drawPoly   : function(){
 		var _this       = this,
 			threshold   = this.polyThres,
-			startPix    = Math.floor( this.colorArray.length/2 ) - 1,
+			startPix    = Math.floor( this.colorArray.length / 2 ) - 1,
 			width       = this.canvas.width  / this.sampleSize,
 			height      = this.canvas.height / this.sampleSize,
 			colorArray  = this.colorArray,
@@ -250,8 +250,11 @@ var capture = {
 			var tmpColor = 'rgba( ' + section.color.r + ', ' + section.color.g + ', ' + section.color.b + ', ' + section.color.a + ')';
 
 			for( var i=0, x=section.indexes.length; i<x; i++ ){
-				_this.test( colorArray[section.indexes[i]], 'teal' );
+				// _this.test( colorArray[section.indexes[i]], 'teal' );
+				_this.test( colorArray[section.indexes[i]], tmpColor );
 			}
+			_this.test( colorArray[index], 'yellow' ); // STARTING POINT
+			_this.test( colorArray[ section.indexes[ section.indexes.length - 1 ] ], 'orange' );
 		}
 
 		startSection( startPix );
@@ -272,21 +275,18 @@ var capture = {
 		}
 
 		function testColor( index, i, elem ){
+			/**
+			// 		TODO
+			//		+ Add condition to test if going off left/right of canvas
+			**/
 			if( i >= 0 && i < colorArray.length ){
-				_this.test( colorArray[i], 'red' );
-				if( compareColors( colorArray[index], colorArray[i] ) ){
+				if( compareColors( elem.color, colorArray[i] ) ){
 					checkIndexes( i, elem );
 				}
 			}
 		}
 
 		function spiral( elem, index, level ){
-
-			/*
-			//		x < colorArray.length
-			//		  >= 0
-			//	
-			*/
 
 			level = level || 1; 
 
